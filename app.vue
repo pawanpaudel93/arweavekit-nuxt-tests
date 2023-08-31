@@ -6,9 +6,10 @@ import {
   postTransaction,
 } from "arweavekit/transaction";
 import { queryAllTransactionsGQL } from "arweavekit/graphql";
-import { ref } from "vue";
 import Transaction from "arweave/node/lib/transaction";
+import { ref } from "vue";
 
+const config = useRuntimeConfig();
 const files = ref<File[]>([]);
 
 function handleFileChange(e: Event) {
@@ -21,7 +22,7 @@ function handleFileChange(e: Event) {
 
 async function logIn() {
   const userDetails = await Othent.logIn({
-    apiId: import.meta.env.VITE_OTHENT_API_ID,
+    apiId: config.public.othentPublicApiId as string,
   });
 
   console.log("Othent Login details", userDetails);
@@ -29,7 +30,7 @@ async function logIn() {
 
 async function logOut() {
   await Othent.logOut({
-    apiId: import.meta.env.VITE_OTHENT_API_ID,
+    apiId: config.public.othentPublicApiId as string,
   });
 
   console.log("Logged out of Othent");
