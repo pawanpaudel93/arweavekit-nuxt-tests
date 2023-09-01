@@ -10,6 +10,10 @@ export default defineNuxtConfig({
     },
   },
   vite: {
-    plugins: [nodePolyfills()],
+    plugins: [
+      nodePolyfills({
+        include: ["buffer", "crypto", "stream", "util"],
+      }),
+    ],
   },
 });
