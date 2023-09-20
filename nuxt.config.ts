@@ -12,8 +12,20 @@ export default defineNuxtConfig({
   vite: {
     plugins: [
       nodePolyfills({
-        include: ["buffer", "crypto", "stream", "util"],
+        include: ["buffer", "crypto", "stream", "util", "vm"],
+        globals: {
+          process: false,
+        },
       }),
     ],
+    resolve: {
+      alias: [
+        {
+          find: "ethers",
+          replacement:
+            "https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.min.js",
+        },
+      ],
+    },
   },
 });

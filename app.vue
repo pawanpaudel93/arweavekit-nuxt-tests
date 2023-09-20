@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { Othent } from "arweavekit/auth";
-import {
-  createTransaction,
-  signTransaction,
-  postTransaction,
-} from "arweavekit/transaction";
-import { queryAllTransactionsGQL } from "arweavekit/graphql";
 import Transaction from "arweave/node/lib/transaction";
+const {
+  $Othent: Othent,
+  $createTransaction: createTransaction,
+  $signTransaction: signTransaction,
+  $postTransaction: postTransaction,
+  $queryAllTransactionsGQL: queryAllTransactionsGQL,
+  $createContract: createContract,
+  $writeContract: writeContract,
+} = useNuxtApp();
+
 import { ref } from "vue";
 
 const config = useRuntimeConfig();
@@ -148,6 +151,35 @@ edges {
 
   console.log("This is the result of the query", res);
 }
+
+async function createContractTestNet() {
+  const { contract, result } = await createContract({
+    environment: "testnet",
+    initialState: JSON.stringify({ counter: 0 }),
+    contractSource: `
+    export function handle(state, action) {
+      if (action.input.function === 'decrement') {
+        state.counter -= 1
+      }
+      if (action.input.function === 'increment') {
+        state.counter += 1
+      }
+      return { state }
+    }`,
+  });
+  console.log(result, contract);
+}
+
+async function writeContractTestNet() {
+  const response = await writeContract({
+    environment: "testnet",
+    contractTxId: "CO7NkmEVj4wEwPySxYUY0_ElrEqU4IeTglU2IilCnLA",
+    options: {
+      function: "increment",
+    },
+  });
+  console.log(response);
+}
 </script>
 
 <template>
@@ -164,6 +196,12 @@ edges {
       </button>
       <button class="border-4" @click="queryGQLTxn">
         Query All GQL Transactions
+      </button>
+      <button class="border-4" @click="createContractTestNet">
+        Create Contract
+      </button>
+      <button class="border-4" @click="writeContractTestNet">
+        Write Contract
       </button>
     </div>
   </div>
